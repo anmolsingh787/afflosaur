@@ -1,0 +1,163 @@
+// ==========================================
+// Afflosaur - Global App Context (Fixed Login)
+// ==========================================
+
+import { createContext, useContext, useState, useCallback, type ReactNode, useEffect } from 'react';
+import type { Page, Theme, Product, BlogPost, User } from '../types';
+import { mockProducts, mockBlogPosts } from '../data/mockData';
+import { getTrendingProducts, signIn, signUp, signOut, getCurrentUser, supabase } from '../lib/supabaseClient';
+
+interface AppState {
+  currentPage: Page;
+  setPage: (page: Page) => void;
+  theme: Theme;
+  toggleTheme: () => void;
+  isLoggedIn: boolean;
+  user: User | null;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  products: Product[];
+  setProducts: (products: Product[]) => void;
+  blogPosts: BlogPost[];
+  setBlogPosts: (posts: BlogPost[]) => void;
+  isLoading: boolean;
+  selectedProductId: string | null;
+  setSelectedProductId: (id: string | null) => void;
+  selectedBlogId: string | null;
+  setSelectedBlogId: (id: string | null) => void;
+  isDinoOpen: boolean;
+  setDinoOpen: (open: boolean) => void;
+  searchQuery: string;
+  setSearchQuery: (q: string) => void;
+  isMobileMenuOpen: boolean;
+  setMobileMenuOpen: (open: boolean) => void;
+  cartCount: number;
+  addToCart: () => void;
+  notification: string | null;
+  showNotification: (msg: string) => void;
+}
+
+const AppContext = createContext<AppState | null>(null);
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [theme, setTheme] = useState<Theme>('light');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+  const [selectedBlogId, setSelectedBlogId] = useState<string | null>(null);
+  const [isDinoOpen, setDinoOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const [notification, setNotification] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // User synchronization helper
+  const syncUser = useCallback((currentUser: any) => {
+    if (currentUser && currentUser.email) {
+      setIsLoggedIn(true);
+      setUser(currentUser as User);
+    } else {
+      setIsLoggedIn(false);
+      setUser(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    const initApp = async () => {
+      try {
+        const trending = await getTrendingProducts();
+        if (trending && trending.length > 0) setProducts(trending as Product[]);
+        
+        const currentUser = await getCurrentUser();
+        syncUser(currentUser);
+      } catch (error) {
+        console.error('Initial load error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    initApp();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      syncUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [syncUser]);
+
+  const setPage = useCallback((page: Page) => {
+    setCurrentPage(page);
+    setMobileMenuOpen(false);
+    window.scrollTo(0, 0);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(t => t === 'light' ? 'dark' : 'light');
+  }, []);
+
+  const showNotification = useCallback((msg: string) => {
+    setNotification(msg);
+    setTimeout(() => setNotification(null), 3000);
+  }, []);
+
+  // Fixed Login with Type Checking to prevent Circular JSON error
+  const login = useCallback(async (email: string, password: string) => {
+    // Check if input is string (Prevents HTMLButtonElement error)
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      console.error("Login Error: Parameters must be strings, not events.");
+      return;
+    }
+
+    try {
+      const { data, error } = await signIn(email, password);
+      if (error) throw error;
+      
+      if (data?.user) syncUser(data.user);
+      showNotification('Welcome to Afflosaur! 🦖');
+    } catch (error: any) {
+      console.error("Login Logic Error:", error.message);
+      showNotification(`Login failed: ${error.message}`);
+      throw error;
+    }
+  }, [showNotification, syncUser]);
+
+  const logout = useCallback(async () => {
+    try {
+      await signOut();
+      syncUser(null);
+      setCurrentPage('home');
+      showNotification('Logged out successfully');
+    } catch (error) {
+      showNotification('Logout failed.');
+    }
+  }, [showNotification, syncUser]);
+
+  const addToCart = useCallback(() => {
+    setCartCount(c => c + 1);
+    showNotification('Added to cart! 🛒');
+  }, [showNotification]);
+
+  return (
+    <AppContext.Provider value={{
+      currentPage, setPage, theme, toggleTheme,
+      isLoggedIn, user, login, logout,
+      products, setProducts, blogPosts, setBlogPosts, isLoading,
+      selectedProductId, setSelectedProductId, selectedBlogId, setSelectedBlogId,
+      isDinoOpen, setDinoOpen, searchQuery, setSearchQuery,
+      isMobileMenuOpen, setMobileMenuOpen, cartCount, addToCart,
+      notification, showNotification,
+    }}>
+      {children}
+    </AppContext.Provider>
+  );
+}
+
+export function useApp() {
+  const ctx = useContext(AppContext);
+  if (!ctx) throw new Error('useApp must be used within AppProvider');
+  return ctx;
+}
