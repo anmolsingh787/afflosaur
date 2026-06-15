@@ -99,6 +99,7 @@ export default function Header() {
     { id: 'prayagraj' as const, label: 'Prayagraj', emoji: '📍' },
     { id: 'premium-section' as const, label: 'Premium', emoji: '👑' },
     { id: 'blog' as const, label: 'Blog', emoji: '📝' },
+    { id: 'notes' as const, label: 'Notes', emoji: '🗒️' },
     { id: 'deals' as const, label: 'Deals', emoji: '⚡' },
     { id: 'leaderboard' as const, label: 'Leaderboard', emoji: '🏆' },
   ];

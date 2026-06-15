@@ -107,6 +107,14 @@ export function HomePage() {
                 Explore Store <ArrowRight className="w-4 h-4" />
               </button>
               <button
+                onClick={() => setPage('notes')}
+                className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center gap-1.5 ${
+                  isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-white text-gray-700 shadow-md hover:shadow-lg'
+                }`}
+              >
+                🗒️ Study Notes
+              </button>
+              <button
                 onClick={() => setPage('prayagraj')}
                 className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all active:scale-95 flex items-center gap-1.5 ${
                   isDark ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-white text-gray-700 shadow-md hover:shadow-lg'
@@ -396,12 +404,20 @@ export function HomePage() {
         <p className="text-orange-100 mt-2 text-xs sm:text-sm max-w-lg mx-auto">
           Write reviews, create top 10 lists, share deals. Help the community!
         </p>
-        <button
-          onClick={() => setPage('write')}
-          className="mt-4 px-6 py-3 bg-white text-orange-600 rounded-xl font-bold text-sm hover:shadow-lg transition-all active:scale-95"
-        >
-          ✍️ Start Writing
-        </button>
+        <div className="mt-4 flex flex-wrap justify-center gap-3">
+          <button
+            onClick={() => setPage('write')}
+            className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold text-sm hover:shadow-lg transition-all active:scale-95"
+          >
+            ✍️ Start Writing
+          </button>
+          <button
+            onClick={() => setPage('notes')}
+            className="px-6 py-3 bg-orange-950/20 text-white border border-white/20 rounded-xl font-bold text-sm hover:bg-orange-950/30 transition-all active:scale-95"
+          >
+            🗒️ Open Notes
+          </button>
+        </div>
       </section>
 
       {/* AdSense Placeholder */}

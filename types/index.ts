@@ -130,5 +130,5 @@ export interface User {
   reviewCount: number;
 }
 
-export type Page = 'home' | 'store' | 'trending' | 'blog' | 'product' | 'admin' | 'profile' | 'write' | 'blogpost' | 'deals' | 'setup' | 'cart' | 'about' | 'contact' | 'privacy' | 'terms' | 'affiliate-disclosure' | 'deal-alerts' | 'top10' | 'comparisons' | 'prayagraj' | 'search' | 'coins' | 'wallet' | 'missions' | 'giveaways' | 'leaderboard' | 'referral' | 'premium' | 'premium-section' | 'settings' | 'help' | 'auth';
+export type Page = 'home' | 'store' | 'trending' | 'blog' | 'notes' | 'product' | 'admin' | 'profile' | 'write' | 'blogpost' | 'deals' | 'setup' | 'cart' | 'about' | 'contact' | 'privacy' | 'terms' | 'affiliate-disclosure' | 'deal-alerts' | 'top10' | 'comparisons' | 'prayagraj' | 'search' | 'coins' | 'wallet' | 'missions' | 'giveaways' | 'leaderboard' | 'referral' | 'premium' | 'premium-section' | 'settings' | 'help' | 'auth';
 export type Theme = 'light' | 'dark';

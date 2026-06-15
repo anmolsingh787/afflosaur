@@ -18,6 +18,7 @@ import { HomePage } from './pages/HomePage';
 import { StorePage } from './pages/StorePage';
 import { TrendingPage } from './pages/TrendingPage';
 import { BlogPage } from './pages/BlogPage';
+import { NotesPage } from './pages/NotesPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { BlogPostPage } from './pages/BlogPostPage';
 import { WritePage } from './pages/WritePage';
@@ -123,6 +124,7 @@ function AppContent() {
         <Route path="/store" element={<StorePage />} />
         <Route path="/trending" element={<TrendingPage />} />
         <Route path="/blog" element={<BlogPage />} />
+        <Route path="/notes" element={<NotesPage />} />
         <Route path="/product" element={<ProductDetailPage />} />
         <Route path="/blogpost" element={<BlogPostPage />} />
         <Route path="/write" element={<WritePage />} />
@@ -206,6 +208,7 @@ function AppFooter() {
   const communityLinks: FooterLink[] = [
     { label: 'Write a Review', page: 'write' },
     { label: 'Blog', page: 'blog' },
+    { label: 'Notes', page: 'notes' },
     { label: 'Top 10 Lists', page: 'top10' },
     { label: 'Comparisons', page: 'comparisons' },
     { label: 'Deal Alerts', page: 'deal-alerts' },
